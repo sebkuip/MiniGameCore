@@ -1,0 +1,9 @@
+available-games:
+  - "Game1"
+  - "Game2"
+  - "Game3"
+
+banned-players:
+  - "player1"
+  - "player2"
+  - "player3"
