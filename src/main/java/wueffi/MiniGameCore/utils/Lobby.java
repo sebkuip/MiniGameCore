@@ -6,7 +6,6 @@ import wueffi.MiniGameCore.managers.ScoreBoardManager;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class Lobby {

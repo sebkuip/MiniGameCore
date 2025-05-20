@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 public class GameConfig {
+    public final boolean RespawnMode;
+    public final int RespawnDelay;
     private final FileConfiguration config;
-
     private final String gameName;
     private final int maxPlayers;
     private final int teams;
@@ -20,8 +21,6 @@ public class GameConfig {
     private final List<TeamSpawnPoints> teamSpawnPoints = new ArrayList<>();
     private final List<Material> startInventory = new ArrayList<>();
     private final Set<Material> allowedBreakBlocks = new HashSet<>();
-    public final boolean RespawnMode;
-    public final int RespawnDelay;
 
     public GameConfig(File configFile) {
         this.config = YamlConfiguration.loadConfiguration(configFile);
@@ -94,6 +93,22 @@ public class GameConfig {
         return teamSpawnPoints;
     }
 
+    public List<Material> getStartInventory() {
+        return startInventory;
+    }
+
+    public Set<Material> getAllowedBreakBlocks() {
+        return allowedBreakBlocks;
+    }
+
+    public boolean getRespawnMode() {
+        return RespawnMode;
+    }
+
+    public Integer getRespawnDelay() {
+        return RespawnDelay;
+    }
+
     public static class SpawnPoint {
         private final int x, y, z;
 
@@ -154,18 +169,5 @@ public class GameConfig {
         public List<TeamSpawnPoint> getSpawnPoints() {
             return spawnPoints;
         }
-    }
-    public List<Material> getStartInventory() {
-        return startInventory;
-    }
-
-    public Set<Material> getAllowedBreakBlocks() {
-        return allowedBreakBlocks;
-    }
-    public boolean getRespawnMode() {
-        return RespawnMode;
-    }
-    public Integer getRespawnDelay() {
-        return RespawnDelay;
     }
 }

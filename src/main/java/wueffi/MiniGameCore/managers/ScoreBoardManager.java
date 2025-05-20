@@ -15,10 +15,8 @@ import wueffi.MiniGameCore.utils.ScoreBoard;
 import wueffi.MiniGameCore.utils.Stats;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.bukkit.Bukkit.getLogger;
 import static wueffi.MiniGameCore.managers.GameManager.alivePlayers;
@@ -71,7 +69,7 @@ public class ScoreBoardManager implements Listener {
                         Stats.getTotalLosses(player),
                         Lobbymanager.getOpenLobbies(),
                         Lobbymanager.getClosedLobbies()
-                        );
+                );
 
         }
     }

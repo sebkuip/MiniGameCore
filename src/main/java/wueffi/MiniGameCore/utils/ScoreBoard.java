@@ -2,15 +2,19 @@ package wueffi.MiniGameCore.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ScoreBoard {
 
-    private static int animationIndex = 0;
     private static final List<String> animations = Arrays.asList("§b§l» Lobbies", "§b§l» Stats");
     private static final String TITLE = "§6§lMiniGameCore";
+    private static int animationIndex = 0;
 
     public static void createGameBoard(Player player, List<Player> alive) {
         Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -18,7 +22,7 @@ public class ScoreBoard {
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         int count = alive != null ? alive.size() : 0;
-        
+
         obj.getScore("§fAlive: §a" + count).setScore(count + 4);
         obj.getScore("§f───────────────").setScore(count + 3);
 

@@ -13,10 +13,22 @@ public class LobbyManager {
     private static final Map<String, Lobby> lobbies = new HashMap<>();
     private final Map<String, Integer> gameCounters = new HashMap<>();
 
-    private LobbyManager() {}
+    private LobbyManager() {
+    }
 
     public static LobbyManager getInstance() {
         return instance;
+    }
+
+    public static Lobby getLobbyByPlayer(Player player) {
+        return lobbies.values().stream()
+                .filter(lobby -> lobby.containsPlayer(player))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static boolean removeLobby(String lobbyId) {
+        return lobbies.remove(lobbyId) != null;
     }
 
     public Lobby createLobby(String gameName, int maxPlayers, Player owner, File newWorldFolder) {
@@ -35,22 +47,12 @@ public class LobbyManager {
         return lobbies.get(lobbyId);
     }
 
-    public static Lobby getLobbyByPlayer(Player player) {
-        return lobbies.values().stream()
-                .filter(lobby -> lobby.containsPlayer(player))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public static boolean removeLobby(String lobbyId) {
-        return lobbies.remove(lobbyId) != null;
-    }
-
     public List<Lobby> getOpenLobbies() {
         return lobbies.values().stream()
                 .filter(lobby -> !lobby.isFull())
                 .toList();
     }
+
     public List<Lobby> getClosedLobbies() {
         return lobbies.values().stream()
                 .filter(Lobby::isFull)
