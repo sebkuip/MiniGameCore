@@ -50,7 +50,7 @@ public class ScoreBoardManager implements Listener {
 
     public static void updatePlayerBoard(Player player) {
         String status = playerGameStatus.getOrDefault(player, "NONE");
-        getLogger().info(status);
+        // getLogger().info(status);
         switch (status) {
             case "WAITING":
                 Lobby lobby = LobbyManager.getLobbyByPlayer(player);

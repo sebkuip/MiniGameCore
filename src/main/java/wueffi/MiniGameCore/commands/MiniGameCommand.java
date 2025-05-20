@@ -59,7 +59,7 @@ public class MiniGameCommand implements CommandExecutor {
 
         switch (args[0].toLowerCase()) {
             case "host":
-                if (plugin.getBannedPlayers().contains(player.getName())) {
+                if (plugin.getBannedPlayers().contains(player.getUniqueId())) {
                     player.sendMessage("§cYou were banned by an Administrator.");
                     return true;
                 }
@@ -87,7 +87,7 @@ public class MiniGameCommand implements CommandExecutor {
                 break;
 
             case "join":
-                if (plugin.getBannedPlayers().contains(player.getName())) {
+                if (plugin.getBannedPlayers().contains(player.getUniqueId())) {
                     player.sendMessage("§cYou were banned by an Administrator.");
                     return true;
                 }
@@ -300,7 +300,7 @@ public class MiniGameCommand implements CommandExecutor {
 
             case "ban":
                 if (!LuckPermsUtil.hasPermission(player, "mgcore.admin")) {
-                    player.sendMessage("§cYou have no permissions to use this Command!");
+                    player.sendMessage("§cYou don't have permissions to use this Command!");
                     return true;
                 }
                 if (args.length < 2) {
@@ -308,7 +308,7 @@ public class MiniGameCommand implements CommandExecutor {
                     return true;
                 }
                 player.sendMessage("§8[§6MiniGameCore§8] §cBanning player: " + args[1]);
-                plugin.banPlayer(args[1]);
+                plugin.banPlayer(Bukkit.getPlayer(args[1]).getUniqueId());
                 if (args.length == 2) {
                     getLogger().info(player.getName() + " banned Player: " + args[1] + ".");
                 } else {
@@ -321,7 +321,7 @@ public class MiniGameCommand implements CommandExecutor {
 
             case "unban":
                 if (!LuckPermsUtil.hasPermission(player, "mgcore.admin")) {
-                    player.sendMessage("§cYou have no permissions to use this Command!");
+                    player.sendMessage("§cYou don't have permissions to use this Command!");
                     return true;
                 }
                 if (args.length < 2) {
@@ -329,7 +329,7 @@ public class MiniGameCommand implements CommandExecutor {
                     return true;
                 }
                 player.sendMessage("§8[§6MiniGameCore§8] §cUnbanning player: " + args[1]);
-                plugin.unbanPlayer(args[1]);
+                plugin.unbanPlayer(Bukkit.getPlayer(args[1]).getUniqueId());
                 getLogger().info(player.getName() + " unbanned Player: " + args[1] + ".");
                 player.sendMessage("§8[§6MiniGameCore§8] §cUnbanned player: " + args[1]);
                 break;
