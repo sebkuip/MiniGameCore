@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import wueffi.MiniGameCore.MiniGameCore;
 import wueffi.MiniGameCore.managers.GameManager;
 import wueffi.MiniGameCore.managers.LobbyManager;
@@ -14,6 +15,7 @@ import wueffi.MiniGameCore.managers.ScoreBoardManager;
 import wueffi.MiniGameCore.utils.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -25,6 +27,21 @@ public class MiniGameCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
+    private static @NotNull HashMap<String, String> getCommandsPermissions() {
+        HashMap<String, String> commands_permissions = new HashMap<>();
+        commands_permissions.put("host", "mgcore.host");
+        commands_permissions.put("join", "mgcore.join");
+        commands_permissions.put("leave", "mgcore.leave");
+        commands_permissions.put("start", "mgcore.start");
+        commands_permissions.put("spectate", "mgcore.spectate");
+        commands_permissions.put("reload", "mgcore.admin");
+        commands_permissions.put("stopall", "mgcore.admin");
+        commands_permissions.put("stop", "mgcore.admin");
+        commands_permissions.put("ban", "mgcore.admin");
+        commands_permissions.put("unban", "mgcore.admin");
+        return commands_permissions;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         LobbyManager lobbyManager = LobbyManager.getInstance();
@@ -34,19 +51,14 @@ public class MiniGameCommand implements CommandExecutor {
             sender.sendMessage("Yo console User, only players can use this command!");
             return true;
         }
-
-        String[] commands = {"host", "join", "leave", "start", "spectate", "reload", "stopall", "stop", "ban", "unban"};
-        String[] permissions = {
-                "mgcore.host", "mgcore.join", "mgcore.leave", "mgcore.start", "mgcore.spectate",
-                "mgcore.admin", "mgcore.admin", "mgcore.admin", "mgcore.admin", "mgcore.admin"
-        };
+        HashMap<String, String> commands_permissions = getCommandsPermissions();
 
         if (args.length < 1) {
             StringBuilder availableCommands = new StringBuilder("§fUsage: §6/mg <");
 
-            for (int i = 0; i < commands.length; i++) {
-                if (LuckPermsUtil.hasPermission(player, permissions[i])) {
-                    availableCommands.append(commands[i]).append(" | ");
+            for (String command: commands_permissions.keySet()) {
+                if (LuckPermsUtil.hasPermission(player, commands_permissions.get(command))) {
+                    availableCommands.append(command).append(" | ");
                 }
             }
             if (availableCommands.length() > 0) {
