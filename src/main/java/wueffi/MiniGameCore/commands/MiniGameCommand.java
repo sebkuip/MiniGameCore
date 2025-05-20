@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import wueffi.MiniGameCore.MiniGameCore;
 import wueffi.MiniGameCore.managers.GameManager;
+import wueffi.MiniGameCore.managers.LobbyManager;
 import wueffi.MiniGameCore.managers.ScoreBoardManager;
 import wueffi.MiniGameCore.utils.*;
-import wueffi.MiniGameCore.managers.LobbyManager;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -30,12 +30,11 @@ public class MiniGameCommand implements CommandExecutor {
         LobbyManager lobbyManager = LobbyManager.getInstance();
         Lobby lobby;
 
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage("Yo console User, only players can use this command!");
             return true;
         }
 
-        Player player = (Player) sender;
         String[] commands = {"host", "join", "leave", "start", "spectate", "reload", "stopall", "stop", "ban", "unban"};
         String[] permissions = {
                 "mgcore.host", "mgcore.join", "mgcore.leave", "mgcore.start", "mgcore.spectate",
@@ -72,7 +71,7 @@ public class MiniGameCommand implements CommandExecutor {
                     player.sendMessage("§cYou have no permissions to use this Command!");
                     return true;
                 }
-                if (lobbyManager.getLobbyByPlayer(player) != null) {
+                if (LobbyManager.getLobbyByPlayer(player) != null) {
                     player.sendMessage("§8[§6MiniGameCore§8] §cYou are already in another lobby!");
                     return true;
                 }
@@ -100,7 +99,7 @@ public class MiniGameCommand implements CommandExecutor {
                 String lobbyName = args[1];
                 lobby = lobbyManager.getLobby(lobbyName);
 
-                if (lobbyManager.getLobbyByPlayer(player) != null) {
+                if (LobbyManager.getLobbyByPlayer(player) != null) {
                     player.sendMessage("§8[§6MiniGameCore§8] §cYou are already in another lobby!");
                     return true;
                 }
@@ -125,7 +124,7 @@ public class MiniGameCommand implements CommandExecutor {
                 }
                 for (Player gamer : lobby.getPlayers()) {
                     gamer.sendMessage("§8[§6MiniGameCore§8]§a " + player.getName() + " joined! " +
-                    lobby.getPlayers().size() + "/" + lobby.getMaxPlayers() + " players.");
+                            lobby.getPlayers().size() + "/" + lobby.getMaxPlayers() + " players.");
                     player.teleport(lobby.getOwner());
                     player.setGameMode(GameMode.SURVIVAL);
                     ScoreBoardManager.setPlayerStatus(player, "WAITING");
@@ -198,7 +197,7 @@ public class MiniGameCommand implements CommandExecutor {
                     player.sendMessage("§cYou have no permissions to use this Command!");
                     return true;
                 }
-                if (lobbyManager.getLobbyByPlayer(player) != null) {
+                if (LobbyManager.getLobbyByPlayer(player) != null) {
                     player.sendMessage("§8[§6MiniGameCore§8] §cYou are already in a game! Type /mg leave to leave!");
                     return true;
                 }
@@ -310,12 +309,12 @@ public class MiniGameCommand implements CommandExecutor {
                 }
                 player.sendMessage("§8[§6MiniGameCore§8] §cBanning player: " + args[1]);
                 plugin.banPlayer(args[1]);
-                if (args.length == 2){
-                    getLogger().info(player.getName() + " banned Player: " +  args[1] + ".");
+                if (args.length == 2) {
+                    getLogger().info(player.getName() + " banned Player: " + args[1] + ".");
                 } else {
                     String[] tempReason = Arrays.copyOfRange(args, 2, args.length);
                     String reason = String.join(" ", tempReason);
-                    getLogger().info(player.getName() + " banned Player: " +  args[1] + "with reason: " + reason);
+                    getLogger().info(player.getName() + " banned Player: " + args[1] + "with reason: " + reason);
                 }
                 player.sendMessage("§8[§6MiniGameCore§8] §cBanned player: " + args[1]);
                 break;
@@ -331,7 +330,7 @@ public class MiniGameCommand implements CommandExecutor {
                 }
                 player.sendMessage("§8[§6MiniGameCore§8] §cUnbanning player: " + args[1]);
                 plugin.unbanPlayer(args[1]);
-                getLogger().info(player.getName() + " unbanned Player: " +  args[1] + ".");
+                getLogger().info(player.getName() + " unbanned Player: " + args[1] + ".");
                 player.sendMessage("§8[§6MiniGameCore§8] §cUnbanned player: " + args[1]);
                 break;
 

@@ -9,13 +9,12 @@ import wueffi.MiniGameCore.managers.LobbyManager;
 import wueffi.MiniGameCore.managers.ScoreBoardManager;
 import wueffi.MiniGameCore.utils.*;
 
-
 import java.util.List;
 
 public class MiniGameCore extends JavaPlugin {
+    private final MiniGameCore plugin = this;
     private List<String> availableGames;
     private List<String> bannedPlayers;
-    private final MiniGameCore plugin = this;
 
     @Override
     public void onEnable() {
@@ -60,19 +59,23 @@ public class MiniGameCore extends JavaPlugin {
     public List<String> getAvailableGames() {
         return availableGames;
     }
+
     public List<String> getBannedPlayers() {
         return bannedPlayers;
     }
-    public void banPlayer(String player){
+
+    public void banPlayer(String player) {
         bannedPlayers.add(player);
         getConfig().set("banned-players", bannedPlayers);
         saveConfig();
     }
-    public void unbanPlayer(String player){
+
+    public void unbanPlayer(String player) {
         bannedPlayers.remove(player);
         getConfig().set("banned-players", bannedPlayers);
         saveConfig();
     }
+
     public MiniGameCore getPlugin() {
         return plugin;
     }
