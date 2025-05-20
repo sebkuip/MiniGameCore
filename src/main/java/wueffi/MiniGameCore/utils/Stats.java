@@ -50,7 +50,7 @@ public class Stats {
         UUID uuid = player.getUniqueId();
         ensurePlayer(uuid, game);
 
-        String base = uuid.toString() + "." + game;
+        String base = uuid + "." + game;
         statsConfig.set(base + ".played", statsConfig.getInt(base + ".played") + 1);
         statsConfig.set(base + ".won", statsConfig.getInt(base + ".won") + 1);
         save();
@@ -60,7 +60,7 @@ public class Stats {
         UUID uuid = player.getUniqueId();
         ensurePlayer(uuid, game);
 
-        String base = uuid.toString() + "." + game;
+        String base = uuid + "." + game;
         statsConfig.set(base + ".played", statsConfig.getInt(base + ".played") + 1);
         statsConfig.set(base + ".lost", statsConfig.getInt(base + ".lost") + 1);
         save();
@@ -68,19 +68,19 @@ public class Stats {
 
     public static int getPlayed(String game, OfflinePlayer player) {
         statsConfig = YamlConfiguration.loadConfiguration(statsFile);
-        String base = player.getUniqueId().toString() + "." + game;
+        String base = player.getUniqueId() + "." + game;
         return statsConfig.getInt(base + ".played");
     }
 
     public static int getWins(String game, OfflinePlayer player) {
         statsConfig = YamlConfiguration.loadConfiguration(statsFile);
-        String base = player.getUniqueId().toString() + "." + game;
+        String base = player.getUniqueId() + "." + game;
         return statsConfig.getInt(base + ".won");
     }
 
     public static int getLosses(String game, OfflinePlayer player) {
         statsConfig = YamlConfiguration.loadConfiguration(statsFile);
-        String base = player.getUniqueId().toString() + "." + game;
+        String base = player.getUniqueId() + "." + game;
         return statsConfig.getInt(base + ".lost");
     }
 

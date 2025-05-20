@@ -4,20 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.entity.Player;
 import wueffi.MiniGameCore.managers.LobbyManager;
 
 
 public class PlayerHandler implements Listener {
-
-    @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        PlayerReset(player);
-    }
 
     public static void PlayerReset(Player player) {
         Lobby lobby = LobbyManager.getLobbyByPlayer(player);
@@ -45,5 +39,11 @@ public class PlayerHandler implements Listener {
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
         player.setItemOnCursor(null);
+    }
+
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        PlayerReset(player);
     }
 }

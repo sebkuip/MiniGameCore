@@ -20,79 +20,13 @@ import java.util.*;
 import static org.bukkit.Bukkit.getLogger;
 
 public class GameManager implements Listener {
-    private static MiniGameCore plugin;
+    static final Map<Lobby, List<Player>> alivePlayers = new HashMap<>();
     private static final Set<Player> frozenPlayers = new HashSet<>();
     static Map<UUID, Location> playerRespawnPoints = new HashMap<>();
-    static final Map<Lobby, List<Player>> alivePlayers = new HashMap<>();
+    private static MiniGameCore plugin;
 
     public GameManager(MiniGameCore plugin) {
         GameManager.plugin = plugin;
-    }
-
-    public void hostGame(String gameName, CommandSender sender) {
-        Player player = (Player) sender;
-
-        String originalWorldName = gameName + "_world";
-        String newWorldName = gameName + "_copy_" + System.currentTimeMillis();
-
-        File originalWorldFolder = new File("MiniGames", originalWorldName);
-        if (!originalWorldFolder.exists()) {
-            plugin.getLogger().warning("Template world " + originalWorldName + " not found in" + originalWorldFolder.getAbsolutePath() +".");
-            return;
-        }
-
-        File newWorldFolder = new File(Bukkit.getWorldContainer(), newWorldName);
-
-        if (originalWorldFolder.exists()) {
-            try {
-                copyWorldFolder(originalWorldFolder, newWorldFolder);
-            } catch (Exception e) {
-                plugin.getLogger().warning("Failed to copy world: " + e.getMessage());
-                return;
-            }
-            plugin.getLogger().info("World copied successfully.");
-        } else {
-            plugin.getLogger().warning("World folder " + originalWorldName + " not found.");
-            return;
-        }
-
-        World newWorld = Bukkit.createWorld(new WorldCreator(newWorldFolder.getName()));
-
-        if (newWorld == null) {
-            plugin.getLogger().warning("Failed to load copied world: " + newWorldName);
-            return;
-        } else {
-            Location spawnLocation = newWorld.getSpawnLocation();
-            player.teleport(spawnLocation);
-            player.setGameMode(GameMode.SURVIVAL);
-        }
-
-        plugin.getLogger().info("Copied and loaded world: " + newWorldName);
-
-        if (LobbyManager.getLobbyByPlayer(player) != null) {
-            player.sendMessage("§8[§6MiniGameCore§8]§c You are already in a game or lobby!");
-            return;
-        }
-
-        GameConfig gameConfig = loadGameConfigFromWorld(newWorldFolder);
-        int maxPlayers = gameConfig.getMaxPlayers();
-
-        LobbyManager lobbyManager = LobbyManager.getInstance();
-        Lobby lobby = lobbyManager.createLobby(gameName, maxPlayers, player, newWorldFolder);
-
-        if (lobby == null) {
-            player.sendMessage("§8[§6MiniGameCore§8]§c Lobby could not be created!");
-            return;
-        }
-
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            onlinePlayer.sendMessage("§8[§6MiniGameCore§8]§a " + player.getName() + " is hosting " + lobby.getGameName() + "! " +
-                    lobby.getPlayers().size() + "/" + maxPlayers + " players - type /mg join " + lobby.getLobbyId() + " to join the fun!");
-        }
-
-        if (lobby.isFull()) {
-            startGame(lobby);
-        }
     }
 
     public static void startGame(Lobby lobby) {
@@ -176,6 +110,7 @@ public class GameManager implements Listener {
 
         new BukkitRunnable() {
             int timeLeft = 10;
+
             @Override
             public void run() {
                 if (timeLeft > 0) {
@@ -211,6 +146,76 @@ public class GameManager implements Listener {
         } else {
             plugin.getLogger().warning("No config.yml found in world folder for " + worldFolder.getName());
             return new GameConfig(configFile);
+        }
+    }
+
+    private static void runDelayed(Runnable task, int seconds) {
+        Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("MiniGameCore"), task, seconds * 20L);
+    }
+
+    public void hostGame(String gameName, CommandSender sender) {
+        Player player = (Player) sender;
+
+        String originalWorldName = gameName + "_world";
+        String newWorldName = gameName + "_copy_" + System.currentTimeMillis();
+
+        File originalWorldFolder = new File("MiniGames", originalWorldName);
+        if (!originalWorldFolder.exists()) {
+            plugin.getLogger().warning("Template world " + originalWorldName + " not found in" + originalWorldFolder.getAbsolutePath() + ".");
+            return;
+        }
+
+        File newWorldFolder = new File(Bukkit.getWorldContainer(), newWorldName);
+
+        if (originalWorldFolder.exists()) {
+            try {
+                copyWorldFolder(originalWorldFolder, newWorldFolder);
+            } catch (Exception e) {
+                plugin.getLogger().warning("Failed to copy world: " + e.getMessage());
+                return;
+            }
+            plugin.getLogger().info("World copied successfully.");
+        } else {
+            plugin.getLogger().warning("World folder " + originalWorldName + " not found.");
+            return;
+        }
+
+        World newWorld = Bukkit.createWorld(new WorldCreator(newWorldFolder.getName()));
+
+        if (newWorld == null) {
+            plugin.getLogger().warning("Failed to load copied world: " + newWorldName);
+            return;
+        } else {
+            Location spawnLocation = newWorld.getSpawnLocation();
+            player.teleport(spawnLocation);
+            player.setGameMode(GameMode.SURVIVAL);
+        }
+
+        plugin.getLogger().info("Copied and loaded world: " + newWorldName);
+
+        if (LobbyManager.getLobbyByPlayer(player) != null) {
+            player.sendMessage("§8[§6MiniGameCore§8]§c You are already in a game or lobby!");
+            return;
+        }
+
+        GameConfig gameConfig = loadGameConfigFromWorld(newWorldFolder);
+        int maxPlayers = gameConfig.getMaxPlayers();
+
+        LobbyManager lobbyManager = LobbyManager.getInstance();
+        Lobby lobby = lobbyManager.createLobby(gameName, maxPlayers, player, newWorldFolder);
+
+        if (lobby == null) {
+            player.sendMessage("§8[§6MiniGameCore§8]§c Lobby could not be created!");
+            return;
+        }
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            onlinePlayer.sendMessage("§8[§6MiniGameCore§8]§a " + player.getName() + " is hosting " + lobby.getGameName() + "! " +
+                    lobby.getPlayers().size() + "/" + maxPlayers + " players - type /mg join " + lobby.getLobbyId() + " to join the fun!");
+        }
+
+        if (lobby.isFull()) {
+            startGame(lobby);
         }
     }
 
@@ -307,8 +312,5 @@ public class GameManager implements Listener {
                 }.runTaskTimer(plugin, 0, 20L);
             }
         }
-    }
-    private static void runDelayed(Runnable task, int seconds) {
-        Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("MiniGameCore"), task, seconds * 20L);
     }
 }

@@ -9,13 +9,14 @@ import wueffi.MiniGameCore.managers.LobbyManager;
 import wueffi.MiniGameCore.managers.ScoreBoardManager;
 import wueffi.MiniGameCore.utils.*;
 
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MiniGameCore extends JavaPlugin {
-    private List<String> availableGames;
-    private List<String> bannedPlayers;
     private final MiniGameCore plugin = this;
+    private List<String> availableGames;
+    private List<UUID> bannedPlayers;
 
     @Override
     public void onEnable() {
@@ -23,7 +24,16 @@ public class MiniGameCore extends JavaPlugin {
         saveDefaultConfig();
 
         List<String> availableGames = getConfig().getStringList("available-games");
-        List<String> bannedPlayers = getConfig().getStringList("banned-players");
+        List<UUID> bannedPlayers = new ArrayList<UUID>();
+        for (String UUIDstring : getConfig().getStringList("banned-players")) {
+            try {
+                UUID uuid = UUID.fromString(UUIDstring);
+                bannedPlayers.add(uuid);
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("Found invalid UUID in banned players list " + UUIDstring + ". Ignoring.");
+                continue;
+            }
+        }
         this.availableGames = availableGames;
         this.bannedPlayers = bannedPlayers;
         getLogger().info("Config loaded!");
@@ -60,19 +70,30 @@ public class MiniGameCore extends JavaPlugin {
     public List<String> getAvailableGames() {
         return availableGames;
     }
-    public List<String> getBannedPlayers() {
+
+    public List<UUID> getBannedPlayers() {
         return bannedPlayers;
     }
-    public void banPlayer(String player){
+
+    private void writeBannedPlayers() {
+        List<String> bannedPlayersString = new ArrayList<>();
+        for (UUID player: bannedPlayers) {
+            bannedPlayersString.add(player.toString());
+        }
+        getConfig().set("banned-players", bannedPlayersString);
+        saveConfig();
+    }
+
+    public void banPlayer(UUID player) {
         bannedPlayers.add(player);
-        getConfig().set("banned-players", bannedPlayers);
-        saveConfig();
+        writeBannedPlayers();
     }
-    public void unbanPlayer(String player){
+
+    public void unbanPlayer(UUID player) {
         bannedPlayers.remove(player);
-        getConfig().set("banned-players", bannedPlayers);
-        saveConfig();
+        writeBannedPlayers();
     }
+
     public MiniGameCore getPlugin() {
         return plugin;
     }
