@@ -221,7 +221,7 @@ public class MiniGameCommand implements CommandExecutor {
 
             case "stats":
                 if (args.length == 1) {
-                    player.sendMessage("§cBenutzung: /mg stats <Spieler>");
+                    player.sendMessage("§cUsage: /mg stats <Player>");
                     return true;
                 }
 

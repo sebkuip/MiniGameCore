@@ -75,16 +75,23 @@ public class MiniGameCore extends JavaPlugin {
         return bannedPlayers;
     }
 
+    private void writeBannedPlayers() {
+        List<String> bannedPlayersString = new ArrayList<>();
+        for (UUID player: bannedPlayers) {
+            bannedPlayersString.add(player.toString());
+        }
+        getConfig().set("banned-players", bannedPlayersString);
+        saveConfig();
+    }
+
     public void banPlayer(UUID player) {
         bannedPlayers.add(player);
-        getConfig().set("banned-players", bannedPlayers);
-        saveConfig();
+        writeBannedPlayers();
     }
 
     public void unbanPlayer(UUID player) {
         bannedPlayers.remove(player);
-        getConfig().set("banned-players", bannedPlayers);
-        saveConfig();
+        writeBannedPlayers();
     }
 
     public MiniGameCore getPlugin() {
